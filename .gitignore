@@ -16,7 +16,6 @@ frontend/.angular/
 npm-debug.log
 yarn-error.log
 yarn.lock
-package-lock.json
 .pnpm-debug.log
 
 # ===== Backend (Spring Boot) =====
