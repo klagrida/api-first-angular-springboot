@@ -1,0 +1,265 @@
+# ===================================
+# Git Attributes Configuration
+# ===================================
+# This file ensures consistent line endings and file handling
+# across different operating systems (Windows, Linux, macOS)
+
+# ==========================
+# AUTO-DETECT TEXT FILES
+# ==========================
+# Automatically detect text files and normalize line endings to LF
+* text=auto
+
+# ==========================
+# JAVA FILES
+# ==========================
+*.java text eol=lf diff=java
+*.kt text eol=lf
+*.groovy text eol=lf
+*.scala text eol=lf
+
+# ==========================
+# JAVASCRIPT/TYPESCRIPT
+# ==========================
+*.js text eol=lf
+*.jsx text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.json text eol=lf
+*.map text eol=lf
+
+# ==========================
+# WEB FILES
+# ==========================
+*.html text eol=lf diff=html
+*.css text eol=lf diff=css
+*.scss text eol=lf
+*.sass text eol=lf
+*.less text eol=lf
+*.svg text eol=lf
+
+# ==========================
+# CONFIGURATION FILES
+# ==========================
+*.xml text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.properties text eol=lf
+*.conf text eol=lf
+*.config text eol=lf
+*.ini text eol=lf
+*.toml text eol=lf
+
+# ==========================
+# MARKDOWN & DOCUMENTATION
+# ==========================
+*.md text eol=lf diff=markdown
+*.markdown text eol=lf
+*.txt text eol=lf
+*.adoc text eol=lf
+*.rst text eol=lf
+
+# ==========================
+# SHELL SCRIPTS
+# ==========================
+# Always use LF for shell scripts
+*.sh text eol=lf
+*.bash text eol=lf
+*.zsh text eol=lf
+*.fish text eol=lf
+
+# Maven Wrapper (critical: must use LF)
+mvnw text eol=lf
+gradlew text eol=lf
+
+# ==========================
+# WINDOWS BATCH SCRIPTS
+# ==========================
+# Always use CRLF for Windows batch files
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Maven Wrapper Windows (must use CRLF)
+mvnw.cmd text eol=crlf
+gradlew.bat text eol=crlf
+
+# ==========================
+# SQL FILES
+# ==========================
+*.sql text eol=lf
+
+# ==========================
+# BINARY FILES
+# ==========================
+# Explicitly mark as binary to prevent git from modifying them
+*.jar binary
+*.war binary
+*.ear binary
+*.zip binary
+*.tar binary
+*.gz binary
+*.7z binary
+*.rar binary
+
+# ==========================
+# IMAGE FILES
+# ==========================
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.svg text eol=lf
+
+# ==========================
+# FONT FILES
+# ==========================
+*.ttf binary
+*.otf binary
+*.woff binary
+*.woff2 binary
+*.eot binary
+
+# ==========================
+# VIDEO/AUDIO FILES
+# ==========================
+*.mp4 binary
+*.mov binary
+*.avi binary
+*.mp3 binary
+*.wav binary
+*.ogg binary
+
+# ==========================
+# DOCUMENTS
+# ==========================
+*.pdf binary
+*.doc binary
+*.docx binary
+*.xls binary
+*.xlsx binary
+*.ppt binary
+*.pptx binary
+
+# ==========================
+# CERTIFICATE/KEY FILES
+# ==========================
+*.p12 binary
+*.jks binary
+*.keystore binary
+*.pem binary
+*.key binary
+*.crt binary
+*.cer binary
+
+# ==========================
+# COMPILED OUTPUT
+# ==========================
+*.class binary
+*.dll binary
+*.exe binary
+*.o binary
+*.so binary
+*.dylib binary
+
+# ==========================
+# DIFF HANDLING
+# ==========================
+# Use specific diff drivers for common file types
+*.java diff=java
+*.html diff=html
+*.css diff=css
+*.md diff=markdown
+
+# ==========================
+# MERGE HANDLING
+# ==========================
+# Files that should not be merged
+package-lock.json merge=binary
+yarn.lock merge=binary
+pom.xml merge=union
+
+# ==========================
+# LINGUIST OVERRIDES
+# ==========================
+# Tell GitHub Linguist how to classify files for repository statistics
+
+# Vendor/Third-party code (exclude from language stats)
+**/node_modules/** linguist-vendored
+**/target/** linguist-vendored
+**/dist/** linguist-vendored
+**/build/** linguist-vendored
+**/.mvn/** linguist-vendored
+
+# Generated code (exclude from language stats)
+**/generated/** linguist-generated
+**/*.generated.* linguist-generated
+
+# Documentation (mark as documentation)
+docs/** linguist-documentation
+*.md linguist-documentation
+
+# Example/test files
+**/examples/** linguist-documentation
+**/samples/** linguist-documentation
+
+# ==========================
+# EXPORT-IGNORE
+# ==========================
+# Files/folders to exclude from git archives (git archive)
+.gitattributes export-ignore
+.gitignore export-ignore
+.github/ export-ignore
+.idea/ export-ignore
+.vscode/ export-ignore
+*.md export-ignore
+docs/ export-ignore
+
+# ==========================
+# SPECIAL HANDLING
+# ==========================
+# OpenAPI specifications
+*.openapi.yaml text eol=lf
+*.openapi.yml text eol=lf
+openapi.yaml text eol=lf
+openapi.yml text eol=lf
+
+# Docker files
+Dockerfile text eol=lf
+*.dockerfile text eol=lf
+docker-compose.yml text eol=lf
+.dockerignore text eol=lf
+
+# Kubernetes files
+*.k8s.yaml text eol=lf
+*.k8s.yml text eol=lf
+
+# CI/CD files
+.gitlab-ci.yml text eol=lf
+.travis.yml text eol=lf
+azure-pipelines.yml text eol=lf
+Jenkinsfile text eol=lf
+
+# ==========================
+# IDE FILES
+# ==========================
+*.iml text eol=lf
+*.ipr text eol=lf
+*.iws text eol=lf
+.project text eol=lf
+.classpath text eol=lf
+.settings/** text eol=lf
+
+# ==========================
+# PACKAGE MANAGER LOCK FILES
+# ==========================
+# These files should be committed as-is
+package-lock.json -diff
+yarn.lock -diff
+pnpm-lock.yaml -diff
+Gemfile.lock -diff
+Pipfile.lock -diff
+poetry.lock -diff
+composer.lock -diff

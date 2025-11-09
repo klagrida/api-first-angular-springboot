@@ -1,0 +1,34 @@
+Documentation Structure
+======================
+
+docs/
+├── README.md                           # Documentation index and guide
+├── api-first-angular-springboot.md     # Main article: API-First concepts
+├── QUICK-START.md                      # 5-minute quick start guide
+├── SETUP-GUIDE.md                      # Complete setup (Maven, Git, etc.)
+├── CI-CD-GUIDE.md                      # CI/CD pipeline documentation
+└── PROJECT-OVERVIEW.md                 # High-level project overview
+
+Reading Order by Role
+=====================
+
+New Developer:
+  1. QUICK-START.md → 2. PROJECT-OVERVIEW.md → 3. SETUP-GUIDE.md
+
+DevOps Engineer:
+  1. PROJECT-OVERVIEW.md → 2. SETUP-GUIDE.md → 3. CI-CD-GUIDE.md
+
+Architect/Tech Lead:
+  1. PROJECT-OVERVIEW.md → 2. api-first-angular-springboot.md → 3. CI-CD-GUIDE.md
+
+Manager/Stakeholder:
+  1. PROJECT-OVERVIEW.md only
+
+Naming Convention
+=================
+
+- ALL-CAPS-WITH-DASHES.md for guides (QUICK-START.md, SETUP-GUIDE.md)
+- lowercase-with-dashes.md for articles (api-first-angular-springboot.md)
+- README.md for index files
+
+Total Documentation: ~15,000 words, ~75 minutes reading time

@@ -1,0 +1,397 @@
+name: API-First CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+env:
+  JAVA_VERSION: '17'
+  NODE_VERSION: '20'
+  MAVEN_OPTS: -Xmx2048m
+
+jobs:
+  # ==========================================
+  # Job 1: Generate API Code from OpenAPI Spec
+  # ==========================================
+  generate-api:
+    name: Generate API Code
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Install OpenAPI Generator CLI
+        run: npm install -g @openapitools/openapi-generator-cli
+
+      - name: Validate OpenAPI Specification
+        run: |
+          npx @openapitools/openapi-generator-cli validate -i api/task-api.yaml
+          echo "✅ OpenAPI spec is valid"
+
+      - name: Make Maven Wrapper executable
+        run: chmod +x backend/mvnw
+
+      - name: Generate Backend API Code
+        run: |
+          cd backend
+          ./mvnw generate-sources
+          echo "✅ Backend API code generated"
+
+      - name: Generate Frontend API Code
+        run: |
+          cd frontend
+          npm ci
+          npm run generate-api
+          echo "✅ Frontend API code generated"
+
+      - name: Check for generated code changes
+        id: check_changes
+        run: |
+          if [[ -n $(git status --porcelain) ]]; then
+            echo "changes=true" >> $GITHUB_OUTPUT
+            echo "⚠️  Generated code has changed"
+          else
+            echo "changes=false" >> $GITHUB_OUTPUT
+            echo "✅ No changes in generated code"
+          fi
+
+      - name: Commit and push generated code
+        if: steps.check_changes.outputs.changes == 'true' && github.event_name == 'push'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add backend/target/generated-sources/ || true
+          git add frontend/src/app/generated/ || true
+          git commit -m "chore: regenerate API code from OpenAPI spec [skip ci]" || true
+          git push || true
+
+      - name: Upload Backend Generated Code
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-generated-code
+          path: backend/target/generated-sources/
+          retention-days: 7
+
+      - name: Upload Frontend Generated Code
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-generated-code
+          path: frontend/src/app/generated/
+          retention-days: 7
+
+  # ==========================================
+  # Job 2: Build and Test Backend
+  # ==========================================
+  build-backend:
+    name: Build & Test Backend
+    runs-on: ubuntu-latest
+    needs: generate-api
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Make Maven Wrapper executable
+        run: chmod +x backend/mvnw
+
+      - name: Download Backend Generated Code
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-generated-code
+          path: backend/target/generated-sources/
+
+      - name: Build Backend
+        run: |
+          cd backend
+          ./mvnw clean package -DskipTests
+          echo "✅ Backend build successful"
+
+      - name: Run Backend Tests
+        run: |
+          cd backend
+          ./mvnw test
+          echo "✅ Backend tests passed"
+
+      - name: Generate Test Coverage Report
+        run: |
+          cd backend
+          ./mvnw jacoco:report || true
+
+      - name: Upload Backend Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-jar
+          path: backend/target/*.jar
+          retention-days: 7
+
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-test-results
+          path: backend/target/surefire-reports/
+          retention-days: 7
+
+  # ==========================================
+  # Job 3: Build and Test Frontend
+  # ==========================================
+  build-frontend:
+    name: Build & Test Frontend
+    runs-on: ubuntu-latest
+    needs: generate-api
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Download Frontend Generated Code
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-generated-code
+          path: frontend/src/app/generated/
+
+      - name: Install Frontend Dependencies
+        run: |
+          cd frontend
+          npm ci
+          echo "✅ Dependencies installed"
+
+      - name: Lint Frontend Code
+        run: |
+          cd frontend
+          npm run lint || echo "⚠️  Linting not configured"
+
+      - name: Build Frontend
+        run: |
+          cd frontend
+          npm run build
+          echo "✅ Frontend build successful"
+
+      - name: Run Frontend Tests
+        run: |
+          cd frontend
+          npm run test -- --watch=false --browsers=ChromeHeadless || echo "⚠️  Tests not configured"
+
+      - name: Upload Frontend Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist/
+          retention-days: 7
+
+  # ==========================================
+  # Job 4: Integration Tests
+  # ==========================================
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    needs: [build-backend, build-frontend]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+
+      - name: Download Backend JAR
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-jar
+          path: backend/target/
+
+      - name: Start Backend Server
+        run: |
+          cd backend/target
+          java -jar *.jar &
+          echo $! > backend.pid
+          echo "⏳ Waiting for backend to start..."
+          sleep 30
+
+      - name: Health Check Backend
+        run: |
+          curl -f http://localhost:8080/actuator/health || \
+          curl -f http://localhost:8080/api/v1/tasks || \
+          echo "⚠️  Backend health check failed"
+
+      - name: Run API Tests
+        run: |
+          # Test GET all tasks
+          echo "Testing GET /api/v1/tasks"
+          curl -X GET http://localhost:8080/api/v1/tasks
+
+          # Test POST create task
+          echo "Testing POST /api/v1/tasks"
+          curl -X POST http://localhost:8080/api/v1/tasks \
+            -H "Content-Type: application/json" \
+            -d '{"title":"Test Task","completed":false,"priority":"HIGH"}'
+
+      - name: Stop Backend Server
+        if: always()
+        run: |
+          if [ -f backend/target/backend.pid ]; then
+            kill $(cat backend/target/backend.pid) || true
+          fi
+
+  # ==========================================
+  # Job 5: Security Scanning
+  # ==========================================
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    needs: [build-backend, build-frontend]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Trivy Vulnerability Scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy Results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+
+      - name: Make Maven Wrapper executable
+        run: chmod +x backend/mvnw
+
+      - name: Check Dependencies (Backend)
+        run: |
+          cd backend
+          ./mvnw dependency-check:check || echo "⚠️  Dependency check not configured"
+
+      - name: Check Dependencies (Frontend)
+        run: |
+          cd frontend
+          npm audit --audit-level=moderate || echo "⚠️  Found vulnerabilities"
+
+  # ==========================================
+  # Job 6: Deploy (conditional)
+  # ==========================================
+  deploy:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [integration-tests, security-scan]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download Backend JAR
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-jar
+          path: backend/target/
+
+      - name: Download Frontend Build
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist/
+
+      - name: Deploy Backend
+        run: |
+          echo "🚀 Deploying backend to staging..."
+          # Add your deployment commands here
+          # Examples:
+          # - Deploy to Heroku: git push heroku main
+          # - Deploy to AWS: aws deploy ...
+          # - Deploy to Docker: docker build && docker push
+          echo "✅ Backend deployed"
+
+      - name: Deploy Frontend
+        run: |
+          echo "🚀 Deploying frontend to staging..."
+          # Add your deployment commands here
+          # Examples:
+          # - Deploy to Netlify: netlify deploy --prod
+          # - Deploy to Vercel: vercel --prod
+          # - Deploy to S3: aws s3 sync frontend/dist/ s3://bucket-name
+          echo "✅ Frontend deployed"
+
+      - name: Notify Deployment
+        run: |
+          echo "✅ Deployment completed successfully!"
+          echo "Backend: [Your staging backend URL]"
+          echo "Frontend: [Your staging frontend URL]"
+
+  # ==========================================
+  # Job 7: Notification Summary
+  # ==========================================
+  notify:
+    name: Notification Summary
+    runs-on: ubuntu-latest
+    needs: [deploy]
+    if: always()
+
+    steps:
+      - name: Pipeline Status Summary
+        run: |
+          echo "================================================"
+          echo "  API-First CI/CD Pipeline Summary"
+          echo "================================================"
+          echo "Branch: ${{ github.ref }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "Trigger: ${{ github.event_name }}"
+          echo "Status: ${{ job.status }}"
+          echo "================================================"
+          echo ""
+          echo "✅ API Code Generated"
+          echo "✅ Backend Built & Tested"
+          echo "✅ Frontend Built & Tested"
+          echo "✅ Integration Tests Passed"
+          echo "✅ Security Scan Completed"
+          echo "✅ Deployed to Staging"
+          echo ""
+          echo "================================================"

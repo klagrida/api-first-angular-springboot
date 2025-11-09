@@ -1,0 +1,216 @@
+# ================================
+# Root .gitignore for API-First Project
+# ================================
+
+# ===== Frontend (Angular) =====
+
+# Compiled output
+frontend/dist/
+frontend/tmp/
+frontend/out-tsc/
+frontend/bazel-out/
+frontend/.angular/
+
+# Node modules
+**/node_modules/
+npm-debug.log
+yarn-error.log
+yarn.lock
+package-lock.json
+.pnpm-debug.log
+
+# ===== Backend (Spring Boot) =====
+
+# Maven
+backend/target/
+!backend/.mvn/wrapper/maven-wrapper.jar
+!backend/.mvn/wrapper/maven-wrapper.properties
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# Gradle (if used)
+backend/.gradle/
+backend/build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# Java compiled files
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+
+# ===== IDEs and Editors =====
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# Eclipse
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+.metadata/
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.loadpath
+.recommenders
+
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+*.code-workspace
+
+# NetBeans
+nbproject/private/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# Visual Studio
+.vs/
+
+# ===== System Files =====
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.directory
+.Trash-*
+
+# ===== Generated Code =====
+
+# OpenAPI Generator temporary files
+.openapi-generator/
+.openapi-generator-ignore
+
+# ===== OPTION 1: Commit Generated Code (RECOMMENDED WITH CI) =====
+# The CI/CD pipeline automatically regenerates and commits API code.
+# This provides:
+# - Easier onboarding (no generation needed locally)
+# - Clear diffs when API changes
+# - Faster local builds
+# Keep these lines COMMENTED to commit generated code:
+
+# backend/target/generated-sources/
+# frontend/src/app/generated/
+
+# ===== OPTION 2: Regenerate on Every Build =====
+# If you prefer to regenerate locally and not commit generated code,
+# UNCOMMENT the lines below:
+
+# Backend generated sources
+# backend/target/generated-sources/
+# backend/src/main/java/com/example/taskmanager/api/
+# backend/src/main/java/com/example/taskmanager/model/
+
+# Frontend generated code
+# frontend/src/app/generated/
+
+# NOTE: If you choose Option 2, remove the "Commit and push generated code"
+# step from .github/workflows/ci-cd.yml
+
+# ===== Logs and Databases =====
+
+# Application logs
+*.log
+logs/
+*.log.*
+
+# H2 Database files
+*.db
+*.trace.db
+*.lock.db
+*.mv.db
+
+# ===== Testing =====
+
+# Test coverage
+coverage/
+.nyc_output/
+*.lcov
+
+# JaCoCo
+*.exec
+
+# ===== Environment and Config =====
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Spring Boot
+application-local.properties
+application-local.yml
+
+# ===== Build and Package Managers =====
+
+# npm / yarn
+.npm/
+.yarn/
+.pnp.*
+.yarn-integrity
+
+# Maven wrapper
+!.mvn/wrapper/maven-wrapper.properties
+
+# ===== Documentation =====
+
+# Generated documentation (uncomment if auto-generated)
+# docs/_build/
+# site/
+
+# ===== Temporary Files =====
+
+# Temporary files
+*.tmp
+*.temp
+*.cache
+.cache/
+
+# ===== Security =====
+
+# Secrets and credentials (NEVER commit these!)
+*.pem
+*.key
+*.p12
+*.jks
+secrets.yml
+credentials.json
+
+# ===== Other =====
+
+# Backup files
+*.backup
+*.old
+*.orig

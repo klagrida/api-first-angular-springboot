@@ -1,0 +1,37 @@
+{
+  "$schema": "node_modules/@openapitools/openapi-generator-cli/config.schema.json",
+  "spaces": 2,
+  "generator-cli": {
+    "version": "7.0.1",
+    "storageDir": "~/.openapi-generator",
+    "generators": {
+      "spring": {
+        "generatorName": "spring",
+        "output": "./backend/target/generated-sources",
+        "inputSpec": "./api/task-api.yaml",
+        "apiPackage": "com.example.taskmanager.api",
+        "modelPackage": "com.example.taskmanager.model",
+        "additionalProperties": {
+          "interfaceOnly": "true",
+          "useSpringBoot3": "true",
+          "documentationProvider": "springdoc",
+          "useTags": "true",
+          "delegatePattern": "false",
+          "library": "spring-boot"
+        }
+      },
+      "angular": {
+        "generatorName": "typescript-angular",
+        "output": "./frontend/src/app/generated",
+        "inputSpec": "./api/task-api.yaml",
+        "additionalProperties": {
+          "ngVersion": "20.0.0",
+          "supportsES6": "true",
+          "npmName": "@app/generated-api",
+          "npmVersion": "1.0.0",
+          "withInterfaces": "true"
+        }
+      }
+    }
+  }
+}
