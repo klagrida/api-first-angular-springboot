@@ -105,6 +105,7 @@
                         <useTags>true</useTags>
                         <delegatePattern>false</delegatePattern>
                         <sourceFolder>src/main/java</sourceFolder>
+                        <hideGenerationTimestamp>true</hideGenerationTimestamp>
                     </configOptions>
                 </configuration>
             </plugin>
