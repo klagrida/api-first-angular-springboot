@@ -19,19 +19,15 @@ env:
 
 jobs:
   # ==========================================
-  # Job 1: Generate API Code from OpenAPI Spec
+  # Job 1: Validate & Check Generated Code
   # ==========================================
-  generate-api:
-    name: Generate API Code
+  validate-api:
+    name: Validate API & Check Generated Code
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -47,6 +43,9 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Make Maven Wrapper executable
+        run: chmod +x backend/mvnw
+
       - name: Install OpenAPI Generator CLI
         run: npm install -g @openapitools/openapi-generator-cli
 
@@ -55,13 +54,10 @@ jobs:
           npx @openapitools/openapi-generator-cli validate -i api/task-api.yaml
           echo "✅ OpenAPI spec is valid"
 
-      - name: Make Maven Wrapper executable
-        run: chmod +x backend/mvnw
-
       - name: Generate Backend API Code
         run: |
           cd backend
-          ./mvnw generate-sources
+          ./mvnw openapi-generator:generate
           echo "✅ Backend API code generated"
 
       - name: Generate Frontend API Code
@@ -71,61 +67,23 @@ jobs:
           npm run generate-api
           echo "✅ Frontend API code generated"
 
-      - name: Check for generated code changes
-        id: check_changes
+      - name: Check if generated code is in sync
         run: |
           if [[ -n $(git status --porcelain) ]]; then
-            echo "changes=true" >> $GITHUB_OUTPUT
-            echo "⚠️  Generated code has changed"
+            echo "❌ ERROR: Generated code is out of sync with OpenAPI spec!"
+            echo ""
+            echo "The following files have changes:"
+            git status --short
+            echo ""
+            echo "Please run the following commands locally and commit the changes:"
+            echo "  cd backend && mvn openapi-generator:generate"
+            echo "  cd frontend && npm run generate-api"
+            echo "  git add -A"
+            echo "  git commit -m 'chore: regenerate API code from OpenAPI spec'"
+            exit 1
           else
-            echo "changes=false" >> $GITHUB_OUTPUT
-            echo "✅ No changes in generated code"
+            echo "✅ Generated code is in sync with OpenAPI spec"
           fi
-
-      - name: Commit and push generated code
-        if: steps.check_changes.outputs.changes == 'true'
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-
-          # Add backend generated code (in generated folder)
-          git add backend/src/main/java/com/example/taskmanager/generated/ || true
-
-          # Add frontend generated code
-          git add frontend/src/app/generated/ || true
-          git add frontend/openapitools.json || true
-
-          # Also ensure .openapi-generator-ignore is tracked
-          git add backend/.openapi-generator-ignore || true
-
-          # Check if there are actually changes to commit
-          if git diff --staged --quiet; then
-            echo "No changes to commit after staging"
-            exit 0
-          fi
-
-          git commit -m "chore: regenerate API code from OpenAPI spec [skip ci]"
-
-          # For pull requests, push to the PR branch
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            git push origin HEAD:${{ github.head_ref }}
-          else
-            git push
-          fi
-
-      - name: Upload Backend Generated Code
-        uses: actions/upload-artifact@v4
-        with:
-          name: backend-generated-code
-          path: backend/src/main/java/com/example/taskmanager/generated/
-          retention-days: 7
-
-      - name: Upload Frontend Generated Code
-        uses: actions/upload-artifact@v4
-        with:
-          name: frontend-generated-code
-          path: frontend/src/app/generated/
-          retention-days: 7
 
   # ==========================================
   # Job 2: Build and Test Backend
@@ -133,7 +91,7 @@ jobs:
   build-backend:
     name: Build & Test Backend
     runs-on: ubuntu-latest
-    needs: generate-api
+    needs: validate-api
 
     steps:
       - name: Checkout code
@@ -148,12 +106,6 @@ jobs:
 
       - name: Make Maven Wrapper executable
         run: chmod +x backend/mvnw
-
-      - name: Download Backend Generated Code
-        uses: actions/download-artifact@v4
-        with:
-          name: backend-generated-code
-          path: backend/src/main/java/com/example/taskmanager/generated/
 
       - name: Build Backend
         run: |
@@ -193,7 +145,7 @@ jobs:
   build-frontend:
     name: Build & Test Frontend
     runs-on: ubuntu-latest
-    needs: generate-api
+    needs: validate-api
 
     steps:
       - name: Checkout code
@@ -205,12 +157,6 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
-
-      - name: Download Frontend Generated Code
-        uses: actions/download-artifact@v4
-        with:
-          name: frontend-generated-code
-          path: frontend/src/app/generated/
 
       - name: Install Frontend Dependencies
         run: |

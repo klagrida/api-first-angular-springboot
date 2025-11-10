@@ -87,32 +87,26 @@
             </plugin>
 
             <!-- OpenAPI Generator Plugin -->
+            <!-- Run manually with: mvn openapi-generator:generate -->
             <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
                 <version>7.0.1</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <inputSpec>${project.basedir}/../api/task-api.yaml</inputSpec>
-                            <generatorName>spring</generatorName>
-                            <output>${project.basedir}</output>
-                            <apiPackage>com.example.taskmanager.generated.api</apiPackage>
-                            <modelPackage>com.example.taskmanager.generated.model</modelPackage>
-                            <configOptions>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useSpringBoot3>true</useSpringBoot3>
-                                <documentationProvider>springdoc</documentationProvider>
-                                <useTags>true</useTags>
-                                <delegatePattern>false</delegatePattern>
-                                <sourceFolder>src/main/java</sourceFolder>
-                            </configOptions>
-                        </configuration>
-                    </execution>
-                </executions>
+                <configuration>
+                    <inputSpec>${project.basedir}/../api/task-api.yaml</inputSpec>
+                    <generatorName>spring</generatorName>
+                    <output>${project.basedir}</output>
+                    <apiPackage>com.example.taskmanager.generated.api</apiPackage>
+                    <modelPackage>com.example.taskmanager.generated.model</modelPackage>
+                    <configOptions>
+                        <interfaceOnly>true</interfaceOnly>
+                        <useSpringBoot3>true</useSpringBoot3>
+                        <documentationProvider>springdoc</documentationProvider>
+                        <useTags>true</useTags>
+                        <delegatePattern>false</delegatePattern>
+                        <sourceFolder>src/main/java</sourceFolder>
+                    </configOptions>
+                </configuration>
             </plugin>
         </plugins>
     </build>
