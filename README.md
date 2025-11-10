@@ -6,9 +6,9 @@ This project demonstrates API-first development using Angular 20+ and Spring Boo
 
 ```
 api_first_angular_springboot/
-├── api/                          # OpenAPI specifications
+├── api/                         # OpenAPI specifications
 │   └── task-api.yaml            # Task Manager API contract
-├── backend/                      # Spring Boot backend
+├── backend/                     # Spring Boot backend
 │   ├── mvnw / mvnw.cmd          # Maven wrapper scripts
 │   ├── .mvn/wrapper/            # Maven wrapper files
 │   ├── src/main/java/com/example/taskmanager/
@@ -19,14 +19,14 @@ api_first_angular_springboot/
 │   ├── src/main/resources/
 │   │   └── application.properties
 │   └── pom.xml                  # Maven configuration
-├── frontend/                     # Angular frontend
+├── frontend/                    # Angular frontend
 │   ├── src/app/
 │   │   ├── components/          # UI components
 │   │   ├── services/            # Custom services
 │   │   └── generated/           # Generated API client
 │   ├── angular.json
 │   └── package.json
-├── docs/                         # Documentation
+├── docs/                        # Documentation
 │   ├── api-first-angular-springboot.md  # Main article
 │   ├── QUICK-START.md           # 5-minute quick start
 │   ├── SETUP-GUIDE.md           # Complete setup guide
