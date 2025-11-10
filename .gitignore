@@ -152,6 +152,11 @@ coverage/
 # JaCoCo
 *.exec
 
+# Playwright
+frontend/playwright-report/
+frontend/test-results/
+frontend/.playwright/
+
 # ===== Environment and Config =====
 
 # Environment variables

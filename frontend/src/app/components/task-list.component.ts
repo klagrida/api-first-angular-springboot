@@ -330,15 +330,20 @@ export class TaskListComponent {
   async onSaveTask(taskData: TaskCreate | TaskUpdate) {
     const editTask = this.editingTask();
 
-    if (editTask) {
-      // Update existing task
-      await this.store.updateTask(editTask.id!, taskData as TaskUpdate);
-    } else {
-      // Create new task
-      await this.store.createTask(taskData as TaskCreate);
-    }
+    try {
+      if (editTask) {
+        // Update existing task
+        await this.store.updateTask(editTask.id!, taskData as TaskUpdate);
+      } else {
+        // Create new task
+        await this.store.createTask(taskData as TaskCreate);
+      }
 
-    this.closeForm();
+      this.closeForm();
+    } catch (error) {
+      console.error('Error saving task:', error);
+      // TODO: Show error message to user
+    }
   }
 
   toggleTask(task: Task) {

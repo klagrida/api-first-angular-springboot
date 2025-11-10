@@ -235,11 +235,25 @@ export class TaskFormComponent {
 
     const isEdit = !!this.editTask();
 
+    // Convert date string (YYYY-MM-DD) to ISO datetime (YYYY-MM-DDTHH:mm:ssZ)
+    let dueDateTime: string | undefined = undefined;
+    if (this.formData.dueDate) {
+      // If the date is just a date string, convert to start of day in ISO format
+      const dateValue = this.formData.dueDate;
+      if (dateValue.length === 10) {
+        // YYYY-MM-DD format - append time
+        dueDateTime = `${dateValue}T00:00:00Z`;
+      } else {
+        // Already in datetime format
+        dueDateTime = dateValue;
+      }
+    }
+
     const taskData: any = {
       title: this.formData.title.trim(),
       description: this.formData.description?.trim() || undefined,
       priority: this.formData.priority || undefined,
-      dueDate: this.formData.dueDate || undefined
+      dueDate: dueDateTime
     };
 
     // Only include completed for edit mode
@@ -248,12 +262,12 @@ export class TaskFormComponent {
     }
 
     this.save.emit(taskData);
-    this.resetForm();
+    // Don't reset form here - let parent handle closing/resetting
   }
 
   onCancel() {
     this.cancel.emit();
-    this.resetForm();
+    // Don't reset form here - let parent handle closing/resetting
   }
 
   private resetForm() {
