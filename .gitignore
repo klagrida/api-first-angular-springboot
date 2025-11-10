@@ -110,7 +110,11 @@ $RECYCLE.BIN/
 
 # OpenAPI Generator temporary files
 .openapi-generator/
-# Note: backend/.openapi-generator-ignore is tracked to control what gets generated
+
+# OpenAPI Generator ignore files
+# Backend version is tracked to control generation
+# Frontend version is not needed (auto-generated template only)
+frontend/**/.openapi-generator-ignore
 
 # ===== Generated Code - COMMITTED TO REPO =====
 # The CI/CD pipeline automatically regenerates and commits API code.
