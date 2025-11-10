@@ -2,7 +2,7 @@ import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TaskResourceStore } from '../services/task-resource-store';
 import { Task, TaskCreate, TaskUpdate } from '../generated';
-import { TaskFormComponent } from './task-form.component';
+import { TaskForm } from './task-form';
 
 /**
  * Task List Component using Angular 20+ features
@@ -17,7 +17,7 @@ import { TaskFormComponent } from './task-form.component';
 @Component({
   standalone: true,
   selector: 'app-task-list',
-  imports: [CommonModule, TaskFormComponent],
+  imports: [CommonModule, TaskForm],
   template: `
     <div class="task-list-container">
       <div class="header">
@@ -305,7 +305,7 @@ import { TaskFormComponent } from './task-form.component';
     }
   `]
 })
-export class TaskListComponent {
+export class TaskList {
   showForm = signal(false);
   editingTask = signal<Task | null>(null);
   currentFilter = signal<boolean | undefined>(undefined);

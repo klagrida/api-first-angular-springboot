@@ -197,7 +197,7 @@ import { Task, TaskCreate, TaskUpdate } from '../generated';
     }
   `]
 })
-export class TaskFormComponent {
+export class TaskForm {
   @Input() editTask = signal<Task | null>(null);
   @Output() save = new EventEmitter<TaskCreate | TaskUpdate>();
   @Output() cancel = new EventEmitter<void>();
