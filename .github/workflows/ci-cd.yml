@@ -143,20 +143,6 @@ jobs:
             git push
           fi
 
-      - name: Upload Backend Generated Code
-        uses: actions/upload-artifact@v4
-        with:
-          name: backend-generated-code
-          path: backend/src/main/java/com/example/taskmanager/generated/
-          retention-days: 7
-
-      - name: Upload Frontend Generated Code
-        uses: actions/upload-artifact@v4
-        with:
-          name: frontend-generated-code
-          path: frontend/src/app/generated/
-          retention-days: 7
-
   # ==========================================
   # Job 3: Build and Test Backend
   # ==========================================
@@ -179,13 +165,6 @@ jobs:
 
       - name: Make Maven Wrapper executable
         run: chmod +x backend/mvnw
-
-      - name: Download Backend Generated Code
-        if: needs.check-api-changes.outputs.api-changed == 'true'
-        uses: actions/download-artifact@v4
-        with:
-          name: backend-generated-code
-          path: backend/src/main/java/com/example/taskmanager/generated/
 
       - name: Build Backend
         run: |
@@ -238,13 +217,6 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
-
-      - name: Download Frontend Generated Code
-        if: needs.check-api-changes.outputs.api-changed == 'true'
-        uses: actions/download-artifact@v4
-        with:
-          name: frontend-generated-code
-          path: frontend/src/app/generated/
 
       - name: Install Frontend Dependencies
         run: |
