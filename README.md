@@ -43,10 +43,11 @@ api_first_angular_springboot/
 ## Features
 
 - **API-First Design**: OpenAPI 3.0 specification defines the contract
-- **Spring Boot 3.2**: Modern backend with JPA, H2 database, SpringDoc
+- **Spring Boot 3.2**: Backend implements generated API interfaces for compile-time safety
 - **Angular 20+**: Standalone components, signals, rxResource, modern control flow
 - **Code Generation**: Automated client/server code generation from OpenAPI spec
-- **Safe Regeneration**: Backend uses service layer, frontend separates generated code
+- **Generated Code Committed**: CI automatically regenerates and commits when spec changes
+- **Centralized Config**: CORS and environment settings in configuration files
 
 ## Prerequisites
 
@@ -139,18 +140,19 @@ All endpoints are prefixed with `/api/v1`:
 
 ### Backend Development
 
-The backend follows a layered architecture:
+The backend follows a layered architecture with API-first pattern:
 
-- **Generated Models** (in `target/generated-sources`): Auto-generated DTOs
-- **Controller**: Implements REST endpoints, maps between DTOs and entities
+- **Generated Code** (`src/main/java/.../generated/`): Auto-generated API interfaces and DTOs
+- **Controller**: Implements generated API interface with business logic
 - **Service**: Business logic layer
 - **Repository**: Data access layer
 - **Entity**: JPA database entities
 
 **Key files:**
-- `TaskController.java` - REST API implementation
-- `TaskService.java` - Business logic
-- `TaskEntity.java` - Database entity
+- `generated/api/TasksApi.java` - Generated API interface (don't edit)
+- `controller/TaskController.java` - Implementation of TasksApi
+- `service/TaskService.java` - Business logic
+- `entity/TaskEntity.java` - Database entity
 
 ### Frontend Development
 
@@ -170,11 +172,24 @@ The frontend separates generated and custom code:
 
 The OpenAPI specification (`api/task-api.yaml`) is the single source of truth. Both backend and frontend are generated from this contract.
 
-### 2. Safe Code Regeneration
+### 2. Backend Implements Generated Interface
 
-**Backend Strategy**: Custom business logic is in services and controllers, not in generated code.
+Controllers implement generated API interfaces for compile-time contract compliance:
 
-**Frontend Strategy**: Generated code is isolated in `generated/` folder, custom logic in separate services.
+```java
+@RestController
+public class TaskController implements TasksApi {
+    @Override
+    public ResponseEntity<Task> createTask(TaskCreate request) {
+        // Your business logic
+    }
+}
+```
+
+**Benefits:**
+- Compile-time verification of API contract
+- No duplicate Spring annotations
+- Automatic Swagger documentation
 
 ### 3. Modern Angular Features
 
@@ -183,12 +198,11 @@ The OpenAPI specification (`api/task-api.yaml`) is the single source of truth. B
 - **rxResource**: Declarative API calls with loading states
 - **Modern Control Flow**: `@if`, `@for`, `@else` syntax
 
-### 4. Spring Boot Best Practices
+### 4. Centralized Configuration
 
-- Interface-based controllers
-- Service layer for business logic
-- JPA for data access
-- SpringDoc for API documentation
+- **CORS**: Managed in `WebConfig`, configured via `application.properties`
+- **Environment-specific**: Easy to override for dev/staging/prod
+- **No hardcoded values**: All URLs and settings externalized
 
 ## Testing
 
@@ -302,7 +316,7 @@ Complete documentation is organized in the [`docs/`](./docs/) folder:
 | [SETUP-GUIDE.md](./docs/SETUP-GUIDE.md) | Maven wrapper, Git config, setup | 15 min |
 | [CI-CD-GUIDE.md](./docs/CI-CD-GUIDE.md) | Complete CI/CD pipeline guide | 25 min |
 | [PROJECT-OVERVIEW.md](./docs/PROJECT-OVERVIEW.md) | Architecture & high-level overview | 10 min |
-| [api-first-angular-springboot.md](./docs/api-first-angular-springboot.md) | API-first concepts & patterns | 20 min |
+| [API-FIRST-CONCEPTS.md](./docs/API-FIRST-CONCEPTS.md) | API-first concepts & patterns | 20 min |
 
 ## Resources
 
