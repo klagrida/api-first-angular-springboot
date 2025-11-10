@@ -83,14 +83,20 @@ jobs:
           fi
 
       - name: Commit and push generated code
-        if: steps.check_changes.outputs.changes == 'true' && github.event_name == 'push'
+        if: steps.check_changes.outputs.changes == 'true'
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add backend/target/generated-sources/ || true
           git add frontend/src/app/generated/ || true
-          git commit -m "chore: regenerate API code from OpenAPI spec [skip ci]" || true
-          git push || true
+          git commit -m "chore: regenerate API code from OpenAPI spec [skip ci]"
+
+          # For pull requests, push to the PR branch
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git push origin HEAD:${{ github.head_ref }}
+          else
+            git push
+          fi
 
       - name: Upload Backend Generated Code
         uses: actions/upload-artifact@v4
