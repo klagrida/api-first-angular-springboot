@@ -44,8 +44,8 @@ test.describe('Task Manager E2E Tests', () => {
     // Submit the form
     await page.getByRole('button', { name: 'Create' }).click();
 
-    // Wait for modal to close and task to appear in list
-    await expect(page.locator('h3').filter({ hasText: 'New Task' })).not.toBeVisible();
+    // Wait for modal to close by checking the overlay is gone
+    await expect(page.locator('.task-form-overlay')).not.toBeVisible();
 
     // Verify task appears in the list
     await expect(page.locator('h3').filter({ hasText: 'Test Task from E2E' })).toBeVisible();
