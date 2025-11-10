@@ -6,7 +6,15 @@ import { test, expect } from '@playwright/test';
  */
 
 test.describe('Task Manager E2E Tests', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page, request }) => {
+    // Clean up - delete all tasks before each test
+    const tasks = await request.get('http://localhost:8080/api/v1/tasks');
+    const tasksData = await tasks.json();
+
+    for (const task of tasksData) {
+      await request.delete(`http://localhost:8080/api/v1/tasks/${task.id}`);
+    }
+
     // Navigate to the application
     await page.goto('/');
     await expect(page.locator('h2')).toContainText('Task Manager');

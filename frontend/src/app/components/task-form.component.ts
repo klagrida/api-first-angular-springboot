@@ -248,12 +248,12 @@ export class TaskFormComponent {
     }
 
     this.save.emit(taskData);
-    this.resetForm();
+    // Don't reset form here - let parent handle closing/resetting
   }
 
   onCancel() {
     this.cancel.emit();
-    this.resetForm();
+    // Don't reset form here - let parent handle closing/resetting
   }
 
   private resetForm() {
