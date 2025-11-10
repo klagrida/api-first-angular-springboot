@@ -1,19 +1,10 @@
 package com.example.taskmanager.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "tasks")
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class TaskEntity {
 
     @Id
@@ -42,6 +33,150 @@ public class TaskEntity {
     @Column(name = "updated_at")
     private OffsetDateTime updatedAt;
 
+    // Constructors
+    public TaskEntity() {
+    }
+
+    public TaskEntity(Long id, String title, String description, Boolean completed,
+                      Priority priority, OffsetDateTime dueDate, OffsetDateTime createdAt,
+                      OffsetDateTime updatedAt) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.completed = completed;
+        this.priority = priority;
+        this.dueDate = dueDate;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Boolean getCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(Boolean completed) {
+        this.completed = completed;
+    }
+
+    public Priority getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Priority priority) {
+        this.priority = priority;
+    }
+
+    public OffsetDateTime getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(OffsetDateTime dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public OffsetDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public OffsetDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(OffsetDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    // Builder pattern
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private Long id;
+        private String title;
+        private String description;
+        private Boolean completed;
+        private Priority priority;
+        private OffsetDateTime dueDate;
+        private OffsetDateTime createdAt;
+        private OffsetDateTime updatedAt;
+
+        public Builder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder title(String title) {
+            this.title = title;
+            return this;
+        }
+
+        public Builder description(String description) {
+            this.description = description;
+            return this;
+        }
+
+        public Builder completed(Boolean completed) {
+            this.completed = completed;
+            return this;
+        }
+
+        public Builder priority(Priority priority) {
+            this.priority = priority;
+            return this;
+        }
+
+        public Builder dueDate(OffsetDateTime dueDate) {
+            this.dueDate = dueDate;
+            return this;
+        }
+
+        public Builder createdAt(OffsetDateTime createdAt) {
+            this.createdAt = createdAt;
+            return this;
+        }
+
+        public Builder updatedAt(OffsetDateTime updatedAt) {
+            this.updatedAt = updatedAt;
+            return this;
+        }
+
+        public TaskEntity build() {
+            return new TaskEntity(id, title, description, completed, priority,
+                                dueDate, createdAt, updatedAt);
+        }
+    }
+
+    // Lifecycle callbacks
     @PrePersist
     protected void onCreate() {
         createdAt = OffsetDateTime.now();
@@ -59,6 +194,7 @@ public class TaskEntity {
         updatedAt = OffsetDateTime.now();
     }
 
+    // Priority enum
     public enum Priority {
         LOW, MEDIUM, HIGH
     }

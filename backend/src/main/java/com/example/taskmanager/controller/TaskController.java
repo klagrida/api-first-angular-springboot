@@ -3,7 +3,6 @@ package com.example.taskmanager.controller;
 import com.example.taskmanager.entity.TaskEntity;
 import com.example.taskmanager.model.*;
 import com.example.taskmanager.service.TaskService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,11 +21,14 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/api/v1")
-@RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
 public class TaskController {
 
     private final TaskService taskService;
+
+    public TaskController(TaskService taskService) {
+        this.taskService = taskService;
+    }
 
     @GetMapping("/tasks")
     public ResponseEntity<List<Task>> getTasks(

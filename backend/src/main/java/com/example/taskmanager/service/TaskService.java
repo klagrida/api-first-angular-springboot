@@ -2,7 +2,6 @@ package com.example.taskmanager.service;
 
 import com.example.taskmanager.entity.TaskEntity;
 import com.example.taskmanager.repository.TaskRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,11 +9,14 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class TaskService {
 
     private final TaskRepository taskRepository;
+
+    public TaskService(TaskRepository taskRepository) {
+        this.taskRepository = taskRepository;
+    }
 
     public List<TaskEntity> getAllTasks(Boolean completed, Integer limit) {
         List<TaskEntity> tasks;
