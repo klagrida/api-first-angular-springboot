@@ -21,7 +21,7 @@ import jakarta.annotation.Generated;
  * TaskUpdate
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-10T11:22:25.486373846Z[Etc/UTC]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-10T11:23:55.254690619Z[Etc/UTC]")
 public class TaskUpdate {
 
   private String title;
