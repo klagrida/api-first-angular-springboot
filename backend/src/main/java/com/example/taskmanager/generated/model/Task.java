@@ -21,7 +21,7 @@ import jakarta.annotation.Generated;
  * Task
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-10T11:32:42.272126011Z[Etc/UTC]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-10T11:36:54.803718786Z[Etc/UTC]")
 public class Task {
 
   private Long id;
