@@ -19,11 +19,41 @@ env:
 
 jobs:
   # ==========================================
-  # Job 1: Generate API Code from OpenAPI Spec
+  # Job 1: Check if API Changed
+  # ==========================================
+  check-api-changes:
+    name: Check API Changes
+    runs-on: ubuntu-latest
+    outputs:
+      api-changed: ${{ steps.check.outputs.changed }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check if API spec changed
+        id: check
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "⚙️  Manual trigger - will generate API code"
+          elif git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q "^api/"; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "✅ API spec changed - will generate API code"
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "⏭️  API spec unchanged - skipping generation"
+          fi
+
+  # ==========================================
+  # Job 2: Generate API Code from OpenAPI Spec
   # ==========================================
   generate-api:
     name: Generate API Code
     runs-on: ubuntu-latest
+    needs: check-api-changes
+    if: needs.check-api-changes.outputs.api-changed == 'true'
     permissions:
       contents: write
 
@@ -128,12 +158,13 @@ jobs:
           retention-days: 7
 
   # ==========================================
-  # Job 2: Build and Test Backend
+  # Job 3: Build and Test Backend
   # ==========================================
   build-backend:
     name: Build & Test Backend
     runs-on: ubuntu-latest
-    needs: generate-api
+    needs: [check-api-changes, generate-api]
+    if: always() && !cancelled()
 
     steps:
       - name: Checkout code
@@ -150,6 +181,7 @@ jobs:
         run: chmod +x backend/mvnw
 
       - name: Download Backend Generated Code
+        if: needs.check-api-changes.outputs.api-changed == 'true'
         uses: actions/download-artifact@v4
         with:
           name: backend-generated-code
@@ -188,12 +220,13 @@ jobs:
           retention-days: 7
 
   # ==========================================
-  # Job 3: Build and Test Frontend
+  # Job 4: Build and Test Frontend
   # ==========================================
   build-frontend:
     name: Build & Test Frontend
     runs-on: ubuntu-latest
-    needs: generate-api
+    needs: [check-api-changes, generate-api]
+    if: always() && !cancelled()
 
     steps:
       - name: Checkout code
@@ -207,6 +240,7 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
 
       - name: Download Frontend Generated Code
+        if: needs.check-api-changes.outputs.api-changed == 'true'
         uses: actions/download-artifact@v4
         with:
           name: frontend-generated-code
