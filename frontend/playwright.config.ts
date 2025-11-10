@@ -33,13 +33,13 @@ export default defineConfig({
     {
       command: 'cd ../backend && ./mvnw spring-boot:run',
       url: 'http://localhost:8080/api/v1/tasks',
-      reuseExistingServer: !process.env.CI,
+      reuseExistingServer: true,
       timeout: 120000,
     },
     {
       command: 'npm start',
       url: 'http://localhost:4200',
-      reuseExistingServer: !process.env.CI,
+      reuseExistingServer: true,
       timeout: 120000,
     },
   ],
