@@ -149,7 +149,7 @@ jobs:
   build-backend:
     name: Build & Test Backend
     runs-on: ubuntu-latest
-    needs: [check-api-changes, generate-api]
+    needs: check-api-changes
     if: always() && !cancelled()
 
     steps:
@@ -204,7 +204,7 @@ jobs:
   build-frontend:
     name: Build & Test Frontend
     runs-on: ubuntu-latest
-    needs: [check-api-changes, generate-api]
+    needs: check-api-changes
     if: always() && !cancelled()
 
     steps:
