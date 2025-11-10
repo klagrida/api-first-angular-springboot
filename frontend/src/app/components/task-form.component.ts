@@ -233,13 +233,19 @@ export class TaskFormComponent {
       return;
     }
 
-    const taskData: TaskCreate | TaskUpdate = {
+    const isEdit = !!this.editTask();
+
+    const taskData: any = {
       title: this.formData.title.trim(),
       description: this.formData.description?.trim() || undefined,
-      priority: this.formData.priority,
-      dueDate: this.formData.dueDate || undefined,
-      completed: this.formData.completed
+      priority: this.formData.priority || undefined,
+      dueDate: this.formData.dueDate || undefined
     };
+
+    // Only include completed for edit mode
+    if (isEdit) {
+      taskData.completed = this.formData.completed;
+    }
 
     this.save.emit(taskData);
     this.resetForm();
