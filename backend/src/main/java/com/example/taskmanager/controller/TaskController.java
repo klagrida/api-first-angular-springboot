@@ -1,6 +1,7 @@
 package com.example.taskmanager.controller;
 
 import com.example.taskmanager.entity.TaskEntity;
+import com.example.taskmanager.generated.api.TasksApi;
 import com.example.taskmanager.generated.model.*;
 import com.example.taskmanager.service.TaskService;
 import org.springframework.http.HttpStatus;
@@ -11,18 +12,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Custom Task Controller
- * This controller extends/implements the generated API interface.
+ * Task Controller Implementation
  *
- * Implementation Strategy:
- * - Generated interfaces are in src/main/java/com/example/taskmanager/generated/
- * - This controller implements the business logic
- * - You can regenerate the API without losing this custom code
+ * This controller implements the generated TasksApi interface, ensuring
+ * compliance with the OpenAPI specification.
+ *
+ * API-First Approach:
+ * - TasksApi interface is auto-generated from api/task-api.yaml
+ * - All endpoint signatures, annotations, and validations come from the spec
+ * - This class only contains business logic implementation
+ * - Changes to the API require updating the OpenAPI spec first
  */
 @RestController
 @RequestMapping("/api/v1")
 @CrossOrigin(origins = "http://localhost:4200")
-public class TaskController {
+public class TaskController implements TasksApi {
 
     private final TaskService taskService;
 
@@ -30,11 +34,8 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-    @GetMapping("/tasks")
-    public ResponseEntity<List<Task>> getTasks(
-            @RequestParam(required = false) Boolean completed,
-            @RequestParam(required = false, defaultValue = "20") Integer limit) {
-
+    @Override
+    public ResponseEntity<List<Task>> getTasks(Boolean completed, Integer limit) {
         List<TaskEntity> entities = taskService.getAllTasks(completed, limit);
         List<Task> tasks = entities.stream()
                 .map(this::mapToDto)
@@ -43,33 +44,30 @@ public class TaskController {
         return ResponseEntity.ok(tasks);
     }
 
-    @GetMapping("/tasks/{id}")
-    public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
+    @Override
+    public ResponseEntity<Task> getTaskById(Long id) {
         return taskService.getTaskById(id)
                 .map(entity -> ResponseEntity.ok(mapToDto(entity)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping("/tasks")
-    public ResponseEntity<Task> createTask(@RequestBody TaskCreate taskCreate) {
+    @Override
+    public ResponseEntity<Task> createTask(TaskCreate taskCreate) {
         TaskEntity entity = mapToEntity(taskCreate);
         TaskEntity savedEntity = taskService.createTask(entity);
         return ResponseEntity.status(HttpStatus.CREATED).body(mapToDto(savedEntity));
     }
 
-    @PutMapping("/tasks/{id}")
-    public ResponseEntity<Task> updateTask(
-            @PathVariable Long id,
-            @RequestBody TaskUpdate taskUpdate) {
-
+    @Override
+    public ResponseEntity<Task> updateTask(Long id, TaskUpdate taskUpdate) {
         TaskEntity entity = mapToEntity(taskUpdate);
         return taskService.updateTask(id, entity)
                 .map(updated -> ResponseEntity.ok(mapToDto(updated)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/tasks/{id}")
-    public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
+    @Override
+    public ResponseEntity<Void> deleteTask(Long id) {
         boolean deleted = taskService.deleteTask(id);
         return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
