@@ -1,7 +1,7 @@
 package com.example.taskmanager.controller;
 
 import com.example.taskmanager.entity.TaskEntity;
-import com.example.taskmanager.model.*;
+import com.example.taskmanager.generated.model.*;
 import com.example.taskmanager.service.TaskService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
  * This controller extends/implements the generated API interface.
  *
  * Implementation Strategy:
- * - Generated interfaces will be in target/generated-sources after running mvn generate-sources
+ * - Generated interfaces are in src/main/java/com/example/taskmanager/generated/
  * - This controller implements the business logic
  * - You can regenerate the API without losing this custom code
  */

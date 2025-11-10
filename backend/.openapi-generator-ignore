@@ -1,0 +1,17 @@
+# OpenAPI Generator Ignore
+# This file tells the OpenAPI generator which files to skip generating
+
+# Don't generate unnecessary files
+.openapi-generator/**
+.gitignore
+pom.xml
+README.md
+.travis.yml
+git_push.sh
+.gitlab-ci.yml
+
+# Don't overwrite application configuration
+src/main/resources/**
+src/test/**
+
+# Only generate API interfaces and models

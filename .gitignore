@@ -110,33 +110,20 @@ $RECYCLE.BIN/
 
 # OpenAPI Generator temporary files
 .openapi-generator/
-.openapi-generator-ignore
+# Note: backend/.openapi-generator-ignore is tracked to control what gets generated
 
-# ===== OPTION 1: Commit Generated Code (RECOMMENDED WITH CI) =====
+# ===== Generated Code - COMMITTED TO REPO =====
 # The CI/CD pipeline automatically regenerates and commits API code.
 # This provides:
 # - Easier onboarding (no generation needed locally)
 # - Clear diffs when API changes
 # - Faster local builds
-# Keep these lines COMMENTED to commit generated code:
-
-# backend/target/generated-sources/
-# frontend/src/app/generated/
-
-# ===== OPTION 2: Regenerate on Every Build =====
-# If you prefer to regenerate locally and not commit generated code,
-# UNCOMMENT the lines below:
-
-# Backend generated sources
-# backend/target/generated-sources/
-# backend/src/main/java/com/example/taskmanager/api/
-# backend/src/main/java/com/example/taskmanager/model/
-
-# Frontend generated code
-# frontend/src/app/generated/
-
-# NOTE: If you choose Option 2, remove the "Commit and push generated code"
-# step from .github/workflows/ci-cd.yml
+#
+# Generated code locations (DO NOT EDIT MANUALLY):
+# - Backend: backend/src/main/java/com/example/taskmanager/generated/
+# - Frontend: frontend/src/app/generated/
+#
+# These directories are tracked in git and committed by CI when OpenAPI spec changes.
 
 # ===== Logs and Databases =====
 

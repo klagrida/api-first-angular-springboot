@@ -87,8 +87,23 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add backend/target/generated-sources/ || true
+
+          # Add backend generated code (in generated folder)
+          git add backend/src/main/java/com/example/taskmanager/generated/ || true
+
+          # Add frontend generated code
           git add frontend/src/app/generated/ || true
+          git add frontend/openapitools.json || true
+
+          # Also ensure .openapi-generator-ignore is tracked
+          git add backend/.openapi-generator-ignore || true
+
+          # Check if there are actually changes to commit
+          if git diff --staged --quiet; then
+            echo "No changes to commit after staging"
+            exit 0
+          fi
+
           git commit -m "chore: regenerate API code from OpenAPI spec [skip ci]"
 
           # For pull requests, push to the PR branch
@@ -102,7 +117,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: backend-generated-code
-          path: backend/target/generated-sources/
+          path: backend/src/main/java/com/example/taskmanager/generated/
           retention-days: 7
 
       - name: Upload Frontend Generated Code
@@ -138,7 +153,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: backend-generated-code
-          path: backend/target/generated-sources/
+          path: backend/src/main/java/com/example/taskmanager/generated/
 
       - name: Build Backend
         run: |
