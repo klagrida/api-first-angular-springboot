@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { TaskListComponent } from './components/task-list.component';
+import { TaskList } from './components/task-list';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [TaskListComponent],
+  imports: [TaskList],
   template: `
     <div class="container">
       <h1>Task Manager - API-First Angular App</h1>
@@ -25,6 +25,6 @@ import { TaskListComponent } from './components/task-list.component';
     }
   `]
 })
-export class AppComponent {
+export class App {
   title = 'Task Manager';
 }
