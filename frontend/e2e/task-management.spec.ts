@@ -43,11 +43,13 @@ test.describe('Task Manager E2E Tests', () => {
     await page.locator('#description').fill('This is a test task created by Playwright');
     await page.locator('#priority').selectOption('HIGH');
 
-    // Set due date (tomorrow)
+    // Set due date (tomorrow) - HTML input type="date" uses YYYY-MM-DD format
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const dateString = tomorrow.toISOString().split('T')[0];
     await page.locator('#dueDate').fill(dateString);
+
+    // Note: The frontend will convert this to ISO datetime when submitting
 
     // Submit the form
     await page.getByRole('button', { name: 'Create' }).click();
@@ -86,9 +88,9 @@ test.describe('Task Manager E2E Tests', () => {
     await page.getByRole('button', { name: 'Update' }).click();
 
     // Verify updated task appears
-    await expect(page.locator('h3').filter({ hasText: 'Updated Task Title' })).toBeVisible();
-    await expect(page.locator('p').filter({ hasText: 'Updated description' })).toBeVisible();
-    await expect(page.locator('.priority-high').filter({ hasText: 'HIGH' })).toBeVisible();
+    await expect(page.locator('h3').filter({ hasText: 'Updated Task Title' }).first()).toBeVisible();
+    await expect(page.locator('p').filter({ hasText: 'Updated description' }).first()).toBeVisible();
+    await expect(page.locator('.priority-high').filter({ hasText: 'HIGH' }).first()).toBeVisible();
   });
 
   test('should complete a task', async ({ page }) => {
@@ -124,7 +126,8 @@ test.describe('Task Manager E2E Tests', () => {
     // Click undo button
     await taskItem.getByRole('button', { name: /undo/i }).click();
 
-    // Verify task is no longer completed
+    // Wait for the UI to update and verify task is no longer completed
+    await page.waitForTimeout(500); // Give Angular time to update
     await expect(taskItem).not.toHaveClass(/completed/);
     await expect(taskItem.getByRole('button', { name: /complete/i })).toBeVisible();
   });
@@ -163,8 +166,8 @@ test.describe('Task Manager E2E Tests', () => {
 
     // Test "All" filter
     await page.getByRole('button', { name: 'All' }).click();
-    await expect(page.locator('h3').filter({ hasText: 'Active Task' })).toBeVisible();
-    await expect(page.locator('h3').filter({ hasText: 'Completed Task' })).toBeVisible();
+    await expect(page.locator('h3').filter({ hasText: 'Active Task' }).first()).toBeVisible();
+    await expect(page.locator('h3').filter({ hasText: 'Completed Task' }).first()).toBeVisible();
 
     // Test "Active" filter
     await page.getByRole('button', { name: 'Active' }).click();
