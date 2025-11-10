@@ -1,38 +1,46 @@
-import { Injectable, signal } from '@angular/core';
-import { rxResource } from '@angular/core/rxjs-interop';
-// Note: Import from generated code after running npm run generate-api
-// import { Task, TaskService, TaskCreate, TaskUpdate } from '../generated';
+import { Injectable, signal, effect } from '@angular/core';
+import { lastValueFrom } from 'rxjs';
+import { Task, TasksService, TaskCreate, TaskUpdate } from '../generated';
 
 /**
- * Task Resource Store using Angular 20+ rxResource
+ * Task Resource Store using Angular 20+ signals
  *
  * This service wraps the generated API client with reactive state management.
  * It demonstrates the modern API-first approach with Angular signals.
- *
- * Usage:
- * 1. Generate API client: npm run generate-api
- * 2. Uncomment the imports above
- * 3. Inject this service into components
  */
 @Injectable({ providedIn: 'root' })
 export class TaskResourceStore {
-  // Uncomment after generating API client
-  // constructor(private taskService: TaskService) {}
+  constructor(private taskService: TasksService) {
+    // Auto-load tasks when filter changes
+    effect(() => {
+      const filter = this.filterSignal();
+      this.loadTasks(filter.completed, filter.limit);
+    });
+  }
+
+  // State signals
+  tasks = signal<Task[]>([]);
+  isLoading = signal(false);
+  error = signal<any>(null);
 
   // Filter state
   private filterSignal = signal<{ completed?: boolean; limit?: number }>({});
 
-  // Tasks resource with automatic loading/error states
-  // tasksResource = rxResource({
-  //   request: () => this.filterSignal(),
-  //   loader: ({ request }) =>
-  //     this.taskService.getTasks(request.completed, request.limit)
-  // });
-
-  // Computed signals for easy access
-  // tasks = this.tasksResource.value;
-  // isLoading = this.tasksResource.isLoading;
-  // error = this.tasksResource.error;
+  /**
+   * Load tasks from API
+   */
+  private async loadTasks(completed?: boolean, limit?: number) {
+    this.isLoading.set(true);
+    this.error.set(null);
+    try {
+      const tasks = await lastValueFrom(this.taskService.getTasks(completed, limit));
+      this.tasks.set(tasks);
+    } catch (err) {
+      this.error.set(err);
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
 
   /**
    * Update filter and automatically reload tasks
@@ -45,32 +53,33 @@ export class TaskResourceStore {
    * Manually reload tasks
    */
   reload() {
-    // this.tasksResource.reload();
+    const filter = this.filterSignal();
+    this.loadTasks(filter.completed, filter.limit);
   }
 
   /**
    * Create a new task
    */
-  // async createTask(taskCreate: TaskCreate): Promise<Task> {
-  //   const task = await lastValueFrom(this.taskService.createTask(taskCreate));
-  //   this.reload(); // Refresh the list
-  //   return task;
-  // }
+  async createTask(taskCreate: TaskCreate): Promise<Task> {
+    const task = await lastValueFrom(this.taskService.createTask(taskCreate));
+    this.reload(); // Refresh the list
+    return task;
+  }
 
   /**
    * Update an existing task
    */
-  // async updateTask(id: number, taskUpdate: TaskUpdate): Promise<Task> {
-  //   const task = await lastValueFrom(this.taskService.updateTask(id, taskUpdate));
-  //   this.reload(); // Refresh the list
-  //   return task;
-  // }
+  async updateTask(id: number, taskUpdate: TaskUpdate): Promise<Task> {
+    const task = await lastValueFrom(this.taskService.updateTask(id, taskUpdate));
+    this.reload(); // Refresh the list
+    return task;
+  }
 
   /**
    * Delete a task
    */
-  // async deleteTask(id: number): Promise<void> {
-  //   await lastValueFrom(this.taskService.deleteTask(id));
-  //   this.reload(); // Refresh the list
-  // }
+  async deleteTask(id: number): Promise<void> {
+    await lastValueFrom(this.taskService.deleteTask(id));
+    this.reload(); // Refresh the list
+  }
 }

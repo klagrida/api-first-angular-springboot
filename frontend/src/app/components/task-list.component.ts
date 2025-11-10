@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { TaskResourceStore } from '../services/task-resource-store';
+import { Task } from '../generated';
 
 /**
  * Task List Component using Angular 20+ features
@@ -9,13 +11,11 @@ import { TaskResourceStore } from '../services/task-resource-store';
  * - Modern control flow (@if, @for)
  * - Signal-based reactivity
  * - rxResource for API calls
- *
- * After generating the API client, uncomment the template code
  */
 @Component({
   standalone: true,
   selector: 'app-task-list',
-  imports: [],
+  imports: [CommonModule],
   template: `
     <div class="task-list-container">
       <h2>Task Manager</h2>
@@ -29,21 +29,21 @@ import { TaskResourceStore } from '../services/task-resource-store';
       </div>
 
       <!-- Loading State -->
-      <!-- @if (store.isLoading()) {
+      @if (store.isLoading()) {
         <div class="loading">Loading tasks...</div>
-      } -->
+      }
 
       <!-- Error State -->
-      <!-- @else if (store.error()) {
+      @else if (store.error()) {
         <div class="error">
           Error: {{ store.error()?.message }}
         </div>
-      } -->
+      }
 
       <!-- Task List -->
-      <!-- @else if (store.tasks()) {
+      @else if (store.tasks()) {
         <div class="tasks">
-          @if (store.tasks()?.length === 0) {
+          @if (store.tasks().length === 0) {
             <p>No tasks found. Create your first task!</p>
           } @else {
             <ul>
@@ -67,20 +67,14 @@ import { TaskResourceStore } from '../services/task-resource-store';
                     <button (click)="toggleTask(task)">
                       {{ task.completed ? 'Undo' : 'Complete' }}
                     </button>
-                    <button (click)="deleteTask(task.id)">Delete</button>
+                    <button (click)="deleteTask(task.id!)">Delete</button>
                   </div>
                 </li>
               }
             </ul>
           }
         </div>
-      } -->
-
-      <!-- Placeholder while API is not generated -->
-      <div class="placeholder">
-        <p>Run <code>npm run generate-api</code> to generate the API client.</p>
-        <p>Then uncomment the template code in this component.</p>
-      </div>
+      }
     </div>
   `,
   styles: [`
@@ -206,17 +200,19 @@ import { TaskResourceStore } from '../services/task-resource-store';
 export class TaskListComponent {
   constructor(public store: TaskResourceStore) {}
 
-  // Uncomment after generating API client
-  // toggleTask(task: Task) {
-  //   this.store.updateTask(task.id, {
-  //     ...task,
-  //     completed: !task.completed
-  //   });
-  // }
+  toggleTask(task: Task) {
+    this.store.updateTask(task.id!, {
+      title: task.title,
+      description: task.description,
+      completed: !task.completed,
+      priority: task.priority,
+      dueDate: task.dueDate
+    });
+  }
 
-  // deleteTask(id: number) {
-  //   if (confirm('Are you sure you want to delete this task?')) {
-  //     this.store.deleteTask(id);
-  //   }
-  // }
+  deleteTask(id: number) {
+    if (confirm('Are you sure you want to delete this task?')) {
+      this.store.deleteTask(id);
+    }
+  }
 }
