@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output, signal, effect } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
-import { Task, TaskCreate, TaskUpdate } from '../generated';
+import { TaskGen, TaskCreateGen, TaskUpdateGen } from '../generated';
 
 /**
  * Task Form Component
@@ -198,8 +198,8 @@ import { Task, TaskCreate, TaskUpdate } from '../generated';
   `]
 })
 export class TaskForm {
-  @Input() editTask = signal<Task | null>(null);
-  @Output() save = new EventEmitter<TaskCreate | TaskUpdate>();
+  @Input() editTask = signal<TaskGen | null>(null);
+  @Output() save = new EventEmitter<TaskCreateGen | TaskUpdateGen>();
   @Output() cancel = new EventEmitter<void>();
 
   formData: any = {

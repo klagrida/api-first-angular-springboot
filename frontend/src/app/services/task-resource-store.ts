@@ -1,6 +1,6 @@
 import { Injectable, signal, effect } from '@angular/core';
 import { lastValueFrom } from 'rxjs';
-import { Task, TasksService, TaskCreate, TaskUpdate } from '../generated';
+import { TaskGen, TasksGen, TaskCreateGen, TaskUpdateGen } from '../generated';
 
 /**
  * Task Resource Store using Angular 20+ signals
@@ -10,7 +10,7 @@ import { Task, TasksService, TaskCreate, TaskUpdate } from '../generated';
  */
 @Injectable({ providedIn: 'root' })
 export class TaskResourceStore {
-  constructor(private taskService: TasksService) {
+  constructor(private taskService: TasksGen) {
     // Auto-load tasks when filter changes
     effect(() => {
       const filter = this.filterSignal();
@@ -19,7 +19,7 @@ export class TaskResourceStore {
   }
 
   // State signals
-  tasks = signal<Task[]>([]);
+  tasks = signal<TaskGen[]>([]);
   isLoading = signal(false);
   error = signal<any>(null);
 
@@ -60,7 +60,7 @@ export class TaskResourceStore {
   /**
    * Create a new task
    */
-  async createTask(taskCreate: TaskCreate): Promise<Task> {
+  async createTask(taskCreate: TaskCreateGen): Promise<TaskGen> {
     const task = await lastValueFrom(this.taskService.createTask(taskCreate));
     this.reload(); // Refresh the list
     return task;
@@ -69,7 +69,7 @@ export class TaskResourceStore {
   /**
    * Update an existing task
    */
-  async updateTask(id: number, taskUpdate: TaskUpdate): Promise<Task> {
+  async updateTask(id: number, taskUpdate: TaskUpdateGen): Promise<TaskGen> {
     const task = await lastValueFrom(this.taskService.updateTask(id, taskUpdate));
     this.reload(); // Refresh the list
     return task;
