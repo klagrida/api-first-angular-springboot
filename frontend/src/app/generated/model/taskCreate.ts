@@ -9,7 +9,7 @@
  */
 
 
-export interface TaskCreate { 
+export interface TaskCreateGen { 
     /**
      * Task title
      */
@@ -25,13 +25,13 @@ export interface TaskCreate {
     /**
      * Task priority level
      */
-    priority?: TaskCreate.PriorityEnum;
+    priority?: TaskCreateGen.PriorityEnum;
     /**
      * Task due date
      */
     dueDate?: string;
 }
-export namespace TaskCreate {
+export namespace TaskCreateGen {
     export const PriorityEnum = {
         Low: 'LOW',
         Medium: 'MEDIUM',
