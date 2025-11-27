@@ -17,11 +17,11 @@ import { CustomHttpParameterCodec }                          from '../encoder';
 import { Observable }                                        from 'rxjs';
 
 // @ts-ignore
-import { TaskCreateGen } from '../model/taskCreate';
+import { TaskCreateModelGen } from '../model/taskCreate';
 // @ts-ignore
-import { TaskGen } from '../model/task';
+import { TaskModelGen } from '../model/task';
 // @ts-ignore
-import { TaskUpdateGen } from '../model/taskUpdate';
+import { TaskUpdateModelGen } from '../model/taskUpdate';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -33,7 +33,7 @@ import { BaseService } from '../api.base.service';
 @Injectable({
   providedIn: 'root'
 })
-export class TasksGen extends BaseService {
+export class TasksServiceGen extends BaseService {
 
     constructor(protected httpClient: HttpClient, @Optional() @Inject(BASE_PATH) basePath: string|string[], @Optional() configuration?: Configuration) {
         super(basePath, configuration);
@@ -43,16 +43,16 @@ export class TasksGen extends BaseService {
      * Create a new task
      * Creates a new task with the provided details
      * @endpoint post /tasks
-     * @param taskCreateGen 
+     * @param taskCreateModelGen 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public createTask(taskCreateGen: TaskCreateGen, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TaskGen>;
-    public createTask(taskCreateGen: TaskCreateGen, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TaskGen>>;
-    public createTask(taskCreateGen: TaskCreateGen, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TaskGen>>;
-    public createTask(taskCreateGen: TaskCreateGen, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        if (taskCreateGen === null || taskCreateGen === undefined) {
-            throw new Error('Required parameter taskCreateGen was null or undefined when calling createTask.');
+    public createTask(taskCreateModelGen: TaskCreateModelGen, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TaskModelGen>;
+    public createTask(taskCreateModelGen: TaskCreateModelGen, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TaskModelGen>>;
+    public createTask(taskCreateModelGen: TaskCreateModelGen, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TaskModelGen>>;
+    public createTask(taskCreateModelGen: TaskCreateModelGen, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (taskCreateModelGen === null || taskCreateModelGen === undefined) {
+            throw new Error('Required parameter taskCreateModelGen was null or undefined when calling createTask.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -91,10 +91,10 @@ export class TasksGen extends BaseService {
 
         let localVarPath = `/tasks`;
         const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<TaskGen>('post', `${basePath}${localVarPath}`,
+        return this.httpClient.request<TaskModelGen>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: taskCreateGen,
+                body: taskCreateModelGen,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -169,9 +169,9 @@ export class TasksGen extends BaseService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getTaskById(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TaskGen>;
-    public getTaskById(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TaskGen>>;
-    public getTaskById(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TaskGen>>;
+    public getTaskById(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TaskModelGen>;
+    public getTaskById(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TaskModelGen>>;
+    public getTaskById(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TaskModelGen>>;
     public getTaskById(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling getTaskById.');
@@ -204,7 +204,7 @@ export class TasksGen extends BaseService {
 
         let localVarPath = `/tasks/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int64"})}`;
         const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<TaskGen>('get', `${basePath}${localVarPath}`,
+        return this.httpClient.request<TaskModelGen>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,
@@ -226,9 +226,9 @@ export class TasksGen extends BaseService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getTasks(completed?: boolean, limit?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<TaskGen>>;
-    public getTasks(completed?: boolean, limit?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<TaskGen>>>;
-    public getTasks(completed?: boolean, limit?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<TaskGen>>>;
+    public getTasks(completed?: boolean, limit?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<TaskModelGen>>;
+    public getTasks(completed?: boolean, limit?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<TaskModelGen>>>;
+    public getTasks(completed?: boolean, limit?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<TaskModelGen>>>;
     public getTasks(completed?: boolean, limit?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarQueryParameters = new HttpParams({encoder: this.encoder});
@@ -264,7 +264,7 @@ export class TasksGen extends BaseService {
 
         let localVarPath = `/tasks`;
         const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<Array<TaskGen>>('get', `${basePath}${localVarPath}`,
+        return this.httpClient.request<Array<TaskModelGen>>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 params: localVarQueryParameters,
@@ -283,19 +283,19 @@ export class TasksGen extends BaseService {
      * Updates all fields of an existing task
      * @endpoint put /tasks/{id}
      * @param id Task ID
-     * @param taskUpdateGen 
+     * @param taskUpdateModelGen 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public updateTask(id: number, taskUpdateGen: TaskUpdateGen, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TaskGen>;
-    public updateTask(id: number, taskUpdateGen: TaskUpdateGen, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TaskGen>>;
-    public updateTask(id: number, taskUpdateGen: TaskUpdateGen, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TaskGen>>;
-    public updateTask(id: number, taskUpdateGen: TaskUpdateGen, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public updateTask(id: number, taskUpdateModelGen: TaskUpdateModelGen, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TaskModelGen>;
+    public updateTask(id: number, taskUpdateModelGen: TaskUpdateModelGen, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TaskModelGen>>;
+    public updateTask(id: number, taskUpdateModelGen: TaskUpdateModelGen, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TaskModelGen>>;
+    public updateTask(id: number, taskUpdateModelGen: TaskUpdateModelGen, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling updateTask.');
         }
-        if (taskUpdateGen === null || taskUpdateGen === undefined) {
-            throw new Error('Required parameter taskUpdateGen was null or undefined when calling updateTask.');
+        if (taskUpdateModelGen === null || taskUpdateModelGen === undefined) {
+            throw new Error('Required parameter taskUpdateModelGen was null or undefined when calling updateTask.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -334,10 +334,10 @@ export class TasksGen extends BaseService {
 
         let localVarPath = `/tasks/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: "int64"})}`;
         const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<TaskGen>('put', `${basePath}${localVarPath}`,
+        return this.httpClient.request<TaskModelGen>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: taskUpdateGen,
+                body: taskUpdateModelGen,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

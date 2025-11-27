@@ -9,7 +9,7 @@
  */
 
 
-export interface ErrorGen { 
+export interface ErrorModelGen { 
     /**
      * Error code
      */

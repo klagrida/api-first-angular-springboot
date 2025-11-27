@@ -9,7 +9,7 @@
  */
 
 
-export interface TaskGen { 
+export interface TaskModelGen { 
     /**
      * Unique identifier for the task
      */
@@ -29,7 +29,7 @@ export interface TaskGen {
     /**
      * Task priority level
      */
-    priority?: TaskGen.PriorityEnum;
+    priority?: TaskModelGen.PriorityEnum;
     /**
      * Task due date
      */
@@ -43,7 +43,7 @@ export interface TaskGen {
      */
     updatedAt?: string;
 }
-export namespace TaskGen {
+export namespace TaskModelGen {
     export const PriorityEnum = {
         Low: 'LOW',
         Medium: 'MEDIUM',
