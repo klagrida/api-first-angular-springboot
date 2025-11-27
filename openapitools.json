@@ -29,7 +29,9 @@
           "supportsES6": "true",
           "npmName": "@app/generated-api",
           "npmVersion": "1.0.0",
-          "withInterfaces": "true"
+          "withInterfaces": "true",
+          "serviceSuffix": "Generated",
+          "modelSuffix": "Generated"
         }
       }
     }
