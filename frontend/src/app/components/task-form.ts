@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output, signal, effect } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { Task, TaskCreate, TaskUpdate } from '../generated';
 
@@ -11,7 +11,7 @@ import { Task, TaskCreate, TaskUpdate } from '../generated';
 @Component({
   standalone: true,
   selector: 'app-task-form',
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   template: `
     <div class="task-form-overlay" (click)="onCancel()">
       <div class="task-form" (click)="$event.stopPropagation()">
