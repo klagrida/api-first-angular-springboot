@@ -25,7 +25,7 @@
         "output": "./frontend/src/app/generated",
         "inputSpec": "./api/task-api.yaml",
         "additionalProperties": {
-          "ngVersion": "20.0.0",
+          "ngVersion": "21.0.0",
           "supportsES6": "true",
           "npmName": "@app/generated-api",
           "npmVersion": "1.0.0",
