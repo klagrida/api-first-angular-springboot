@@ -19,7 +19,8 @@
     <description>API-First Task Manager with Spring Boot</description>
 
     <properties>
-        <java.version>25</java.version>
+        <java.version>23</java.version>
+        <!-- TODO: Update to 25 when Java 25 is released -->
         <springdoc.version>2.3.0</springdoc.version>
     </properties>
 

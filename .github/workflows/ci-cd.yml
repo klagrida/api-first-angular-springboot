@@ -13,7 +13,7 @@ permissions:
   actions: read
 
 env:
-  JAVA_VERSION: '25'
+  JAVA_VERSION: '23'  # TODO: Update to 25 when available in GitHub Actions
   NODE_VERSION: '20'
   MAVEN_OPTS: -Xmx2048m
 
