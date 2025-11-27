@@ -1,6 +1,6 @@
 import { Injectable, signal, effect } from '@angular/core';
 import { lastValueFrom } from 'rxjs';
-import { TaskGen, TasksGen, TaskCreateGen, TaskUpdateGen } from '../generated';
+import { TaskGen, TasksServiceGen, TaskCreateGen, TaskUpdateGen } from '../generated';
 
 /**
  * Task Resource Store using Angular 20+ signals
@@ -10,7 +10,7 @@ import { TaskGen, TasksGen, TaskCreateGen, TaskUpdateGen } from '../generated';
  */
 @Injectable({ providedIn: 'root' })
 export class TaskResourceStore {
-  constructor(private taskService: TasksGen) {
+  constructor(private taskService: TasksServiceGen) {
     // Auto-load tasks when filter changes
     effect(() => {
       const filter = this.filterSignal();

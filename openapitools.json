@@ -30,7 +30,7 @@
           "npmName": "@app/generated-api",
           "npmVersion": "1.0.0",
           "withInterfaces": "true",
-          "serviceSuffix": "Gen",
+          "serviceSuffix": "ServiceGen",
           "modelSuffix": "Gen"
         }
       }
