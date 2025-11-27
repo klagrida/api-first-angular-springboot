@@ -1,3 +1,3 @@
 export * from './tasks.service';
-import { TasksGenerated } from './tasks.service';
-export const APIS = [TasksGenerated];
+import { TasksGen } from './tasks.service';
+export const APIS = [TasksGen];
