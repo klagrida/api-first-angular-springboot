@@ -1,6 +1,6 @@
 # API-First Development: Task Manager Demo
 
-This project demonstrates API-first development using Angular 20+ and Spring Boot. Complete documentation is available in the [`docs/`](./docs/) folder.
+This project demonstrates API-first development using Angular 21 and Spring Boot 4.0. Complete documentation is available in the [`docs/`](./docs/) folder.
 
 ## Project Structure
 
@@ -43,18 +43,19 @@ api_first_angular_springboot/
 ## Features
 
 - **API-First Design**: OpenAPI 3.0 specification defines the contract
-- **Spring Boot 3.2**: Backend implements generated API interfaces for compile-time safety
-- **Angular 20+**: Standalone components, signals, rxResource, modern control flow
-- **Code Generation**: Automated client/server code generation from OpenAPI spec
+- **Spring Boot 4.0**: Backend implements generated API interfaces for compile-time safety with Jakarta EE
+- **Angular 21**: Standalone components, signals, rxResource, modern control flow
+- **Code Generation**: Automated client/server code generation with clear naming (ServiceGen/ModelGen suffixes)
 - **Generated Code Committed**: CI automatically regenerates and commits when spec changes
 - **Centralized Config**: CORS and environment settings in configuration files
+- **Modern Stack**: Java 23, Spring Framework 7.0, Hibernate 7.1
 
 ## Prerequisites
 
-- **Java 17+** (for Spring Boot)
+- **Java 23+** (for Spring Boot 4.0)
 - **Node.js 20+** and npm (for Angular)
 - **Maven** (optional - we use Maven Wrapper `mvnw`)
-- **Angular CLI 20+** (optional, for Angular development)
+- **Angular CLI 21+** (optional, for Angular development)
 
 > **Note**: Maven installation is optional because this project uses **Maven Wrapper** (`mvnw`/`mvnw.cmd`). The wrapper automatically downloads the correct Maven version on first use. See [docs/SETUP-GUIDE.md](./docs/SETUP-GUIDE.md) for details.
 
@@ -158,13 +159,17 @@ The backend follows a layered architecture with API-first pattern:
 
 The frontend separates generated and custom code:
 
-- **Generated** (`src/app/generated`): API client code
+- **Generated** (`src/app/generated`): API client code with ServiceGen/ModelGen suffixes for easy identification
 - **Services** (`src/app/services`): Custom stores and business logic
 - **Components** (`src/app/components`): UI components
 
 **Key files:**
 - `task-resource-store.ts` - rxResource-based state management
 - `task-list.component.ts` - Main UI component
+
+**Generated code naming:**
+- Services: `TasksServiceGen` (note: "Service" is preserved in the name)
+- Models: `TaskModelGen`, `TaskCreateModelGen`, `TaskUpdateModelGen`
 
 ## Key Concepts Demonstrated
 
@@ -278,7 +283,7 @@ npm run build
 
 ### Backend won't start
 
-- Check Java version: `java -version` (should be 17+)
+- Check Java version: `java -version` (should be 23+)
 - Check port 8080 is available: `netstat -ano | findstr :8080`
 - Check logs in console for errors
 
