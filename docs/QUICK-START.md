@@ -5,10 +5,10 @@ Get the API-First Task Manager running in 5 minutes!
 ## Prerequisites Check
 
 ```bash
-# Check Java (need 17+)
+# Check Java (need 23+)
 java -version
 
-# Check Node.js (need 18+)
+# Check Node.js (need 20+)
 node -v
 
 # Check Maven
