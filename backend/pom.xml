@@ -64,6 +64,13 @@
             <version>0.2.6</version>
         </dependency>
 
+        <!-- JSpecify (required by Spring Framework 7.0.1) -->
+        <dependency>
+            <groupId>org.jspecify</groupId>
+            <artifactId>jspecify</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
         <!-- Spring Boot DevTools -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
