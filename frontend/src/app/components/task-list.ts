@@ -1,7 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TaskResourceStore } from '../services/task-resource-store';
-import { TaskGen, TaskCreateGen, TaskUpdateGen } from '../generated';
+import { TaskModelGen, TaskCreateModelGen, TaskUpdateModelGen } from '../generated';
 import { TaskForm } from './task-form';
 
 /**
@@ -307,7 +307,7 @@ import { TaskForm } from './task-form';
 })
 export class TaskList {
   showForm = signal(false);
-  editingTask = signal<TaskGen | null>(null);
+  editingTask = signal<TaskModelGen | null>(null);
   currentFilter = signal<boolean | undefined>(undefined);
 
   constructor(public store: TaskResourceStore) {}
@@ -317,7 +317,7 @@ export class TaskList {
     this.showForm.set(true);
   }
 
-  openEditForm(task: TaskGen) {
+  openEditForm(task: TaskModelGen) {
     this.editingTask.set(task);
     this.showForm.set(true);
   }
@@ -327,16 +327,16 @@ export class TaskList {
     this.editingTask.set(null);
   }
 
-  async onSaveTask(taskData: TaskCreateGen | TaskUpdateGen) {
+  async onSaveTask(taskData: TaskCreateModelGen | TaskUpdateModelGen) {
     const editTask = this.editingTask();
 
     try {
       if (editTask) {
         // Update existing task
-        await this.store.updateTask(editTask.id!, taskData as TaskUpdateGen);
+        await this.store.updateTask(editTask.id!, taskData as TaskUpdateModelGen);
       } else {
         // Create new task
-        await this.store.createTask(taskData as TaskCreateGen);
+        await this.store.createTask(taskData as TaskCreateModelGen);
       }
 
       this.closeForm();
@@ -346,7 +346,7 @@ export class TaskList {
     }
   }
 
-  toggleTask(task: TaskGen) {
+  toggleTask(task: TaskModelGen) {
     this.store.updateTask(task.id!, {
       title: task.title,
       description: task.description,

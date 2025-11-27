@@ -1,6 +1,6 @@
 import { Injectable, signal, effect } from '@angular/core';
 import { lastValueFrom } from 'rxjs';
-import { TaskGen, TasksServiceGen, TaskCreateGen, TaskUpdateGen } from '../generated';
+import { TaskModelGen, TasksServiceGen, TaskCreateModelGen, TaskUpdateModelGen } from '../generated';
 
 /**
  * Task Resource Store using Angular 20+ signals
@@ -19,7 +19,7 @@ export class TaskResourceStore {
   }
 
   // State signals
-  tasks = signal<TaskGen[]>([]);
+  tasks = signal<TaskModelGen[]>([]);
   isLoading = signal(false);
   error = signal<any>(null);
 
@@ -60,7 +60,7 @@ export class TaskResourceStore {
   /**
    * Create a new task
    */
-  async createTask(taskCreate: TaskCreateGen): Promise<TaskGen> {
+  async createTask(taskCreate: TaskCreateModelGen): Promise<TaskModelGen> {
     const task = await lastValueFrom(this.taskService.createTask(taskCreate));
     this.reload(); // Refresh the list
     return task;
@@ -69,7 +69,7 @@ export class TaskResourceStore {
   /**
    * Update an existing task
    */
-  async updateTask(id: number, taskUpdate: TaskUpdateGen): Promise<TaskGen> {
+  async updateTask(id: number, taskUpdate: TaskUpdateModelGen): Promise<TaskModelGen> {
     const task = await lastValueFrom(this.taskService.updateTask(id, taskUpdate));
     this.reload(); // Refresh the list
     return task;

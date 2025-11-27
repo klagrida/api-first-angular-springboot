@@ -31,7 +31,7 @@
           "npmVersion": "1.0.0",
           "withInterfaces": "true",
           "serviceSuffix": "ServiceGen",
-          "modelSuffix": "Gen"
+          "modelSuffix": "ModelGen"
         }
       }
     }
