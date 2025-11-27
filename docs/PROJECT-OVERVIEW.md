@@ -1,6 +1,6 @@
 # API-First Development Project Overview
 
-A complete reference implementation demonstrating API-first development with Angular 20+ and Spring Boot 3.2, including full CI/CD automation.
+A complete reference implementation demonstrating API-first development with Angular 21 and Spring Boot 4.0, including full CI/CD automation.
 
 ## 📋 Project Summary
 
@@ -33,7 +33,7 @@ api_first_angular_springboot/
 │   └── api/
 │       └── task-api.yaml                   # OpenAPI 3.0 spec (SOURCE OF TRUTH)
 │
-├── ☕ Backend (Spring Boot 3.2)
+├── ☕ Backend (Spring Boot 4.0)
 │   └── backend/
 │       ├── pom.xml                         # Maven configuration
 │       └── src/main/java/com/example/taskmanager/
@@ -49,7 +49,7 @@ api_first_angular_springboot/
 │           └── resources/
 │               └── application.properties  # Configuration
 │
-└── 🅰️ Frontend (Angular 20+)
+└── 🅰️ Frontend (Angular 21)
     └── frontend/
         ├── package.json                    # npm configuration
         ├── angular.json                    # Angular CLI config
@@ -70,7 +70,9 @@ api_first_angular_springboot/
 - ✅ Clear separation of concerns
 
 ### Modern Backend (Spring Boot)
-- ✅ Spring Boot 3.2 with Java 17
+- ✅ Spring Boot 4.0 with Java 23
+- ✅ Spring Framework 7.0 and Hibernate 7.1
+- ✅ Jakarta EE (jakarta.* packages)
 - ✅ JPA with H2 in-memory database
 - ✅ Generated interfaces from OpenAPI
 - ✅ Service layer for business logic
@@ -78,7 +80,7 @@ api_first_angular_springboot/
 - ✅ Full CRUD operations
 - ✅ Comprehensive error handling
 
-### Modern Frontend (Angular 20+)
+### Modern Frontend (Angular 21)
 - ✅ Standalone components (no NgModules)
 - ✅ Signal-based reactivity
 - ✅ rxResource for declarative API calls
