@@ -100,7 +100,7 @@
                     <modelPackage>com.example.taskmanager.generated.model</modelPackage>
                     <configOptions>
                         <interfaceOnly>true</interfaceOnly>
-                        <useSpringBoot3>true</useSpringBoot3>
+                        <useSpringBoot3>false</useSpringBoot3>
                         <documentationProvider>springdoc</documentationProvider>
                         <useTags>true</useTags>
                         <delegatePattern>false</delegatePattern>
