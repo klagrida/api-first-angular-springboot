@@ -38,9 +38,9 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "changed=true" >> $GITHUB_OUTPUT
             echo "⚙️  Manual trigger - will generate API code"
-          elif git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q "^api/"; then
+          elif git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -qE "^api/|^openapitools\.json$|^frontend/package\.json$"; then
             echo "changed=true" >> $GITHUB_OUTPUT
-            echo "✅ API spec changed - will generate API code"
+            echo "✅ API spec or config changed - will generate API code"
           else
             echo "changed=false" >> $GITHUB_OUTPUT
             echo "⏭️  API spec unchanged - skipping generation"
