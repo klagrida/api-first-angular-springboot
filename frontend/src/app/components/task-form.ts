@@ -1,41 +1,41 @@
 import { Component, EventEmitter, Input, Output, signal, effect } from '@angular/core';
-
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TaskModelGen, TaskCreateModelGen, TaskUpdateModelGen } from '../generated';
 
 /**
  * Task Form Component
  *
- * Handles both create and edit modes for tasks
+ * Handles both create and edit modes for tasks using signal-based forms
  */
 @Component({
   standalone: true,
   selector: 'app-task-form',
-  imports: [FormsModule],
+  imports: [ReactiveFormsModule],
   template: `
     <div class="task-form-overlay" (click)="onCancel()">
       <div class="task-form" (click)="$event.stopPropagation()">
         <h3>{{ editTask() ? 'Edit Task' : 'New Task' }}</h3>
 
-        <form (ngSubmit)="onSubmit()">
+        <form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
           <div class="form-group">
             <label for="title">Title *</label>
             <input
               id="title"
               type="text"
-              [(ngModel)]="formData.title"
-              name="title"
-              required
+              formControlName="title"
               placeholder="Enter task title"
+              [class.invalid]="taskForm.controls.title.touched && taskForm.controls.title.invalid"
             />
+            @if (taskForm.controls.title.touched && taskForm.controls.title.invalid) {
+              <span class="error-message">Title is required</span>
+            }
           </div>
 
           <div class="form-group">
             <label for="description">Description</label>
             <textarea
               id="description"
-              [(ngModel)]="formData.description"
-              name="description"
+              formControlName="description"
               rows="3"
               placeholder="Enter task description"
             ></textarea>
@@ -44,7 +44,7 @@ import { TaskModelGen, TaskCreateModelGen, TaskUpdateModelGen } from '../generat
           <div class="form-row">
             <div class="form-group">
               <label for="priority">Priority</label>
-              <select id="priority" [(ngModel)]="formData.priority" name="priority">
+              <select id="priority" formControlName="priority">
                 <option value="LOW">Low</option>
                 <option value="MEDIUM">Medium</option>
                 <option value="HIGH">High</option>
@@ -56,8 +56,7 @@ import { TaskModelGen, TaskCreateModelGen, TaskUpdateModelGen } from '../generat
               <input
                 id="dueDate"
                 type="date"
-                [(ngModel)]="formData.dueDate"
-                name="dueDate"
+                formControlName="dueDate"
               />
             </div>
           </div>
@@ -67,8 +66,7 @@ import { TaskModelGen, TaskCreateModelGen, TaskUpdateModelGen } from '../generat
               <label>
                 <input
                   type="checkbox"
-                  [(ngModel)]="formData.completed"
-                  name="completed"
+                  formControlName="completed"
                 />
                 <span>Completed</span>
               </label>
@@ -79,7 +77,7 @@ import { TaskModelGen, TaskCreateModelGen, TaskUpdateModelGen } from '../generat
             <button type="button" class="btn-secondary" (click)="onCancel()">
               Cancel
             </button>
-            <button type="submit" class="btn-primary">
+            <button type="submit" class="btn-primary" [disabled]="taskForm.invalid">
               {{ editTask() ? 'Update' : 'Create' }}
             </button>
           </div>
@@ -145,6 +143,19 @@ import { TaskModelGen, TaskCreateModelGen, TaskUpdateModelGen } from '../generat
       border-color: #4CAF50;
     }
 
+    .form-group input.invalid,
+    .form-group select.invalid,
+    .form-group textarea.invalid {
+      border-color: #f44336;
+    }
+
+    .error-message {
+      display: block;
+      color: #f44336;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+
     .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -178,12 +189,17 @@ import { TaskModelGen, TaskCreateModelGen, TaskUpdateModelGen } from '../generat
       transition: background-color 0.2s;
     }
 
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
     .btn-primary {
       background: #4CAF50;
       color: white;
     }
 
-    .btn-primary:hover {
+    .btn-primary:hover:not(:disabled) {
       background: #45a049;
     }
 
@@ -202,26 +218,27 @@ export class TaskForm {
   @Output() save = new EventEmitter<TaskCreateModelGen | TaskUpdateModelGen>();
   @Output() cancel = new EventEmitter<void>();
 
-  formData: any = {
-    title: '',
-    description: '',
-    priority: 'MEDIUM',
-    dueDate: '',
-    completed: false
-  };
+  // Signal-based reactive form
+  taskForm = new FormGroup({
+    title: new FormControl('', [Validators.required, Validators.minLength(1)]),
+    description: new FormControl(''),
+    priority: new FormControl<'LOW' | 'MEDIUM' | 'HIGH'>('MEDIUM'),
+    dueDate: new FormControl(''),
+    completed: new FormControl(false)
+  });
 
   constructor() {
     // Update form when editTask changes
     effect(() => {
       const task = this.editTask();
       if (task) {
-        this.formData = {
+        this.taskForm.patchValue({
           title: task.title || '',
           description: task.description || '',
           priority: task.priority || 'MEDIUM',
-          dueDate: task.dueDate || '',
+          dueDate: this.formatDateForInput(task.dueDate),
           completed: task.completed || false
-        };
+        });
       } else {
         this.resetForm();
       }
@@ -229,17 +246,18 @@ export class TaskForm {
   }
 
   onSubmit() {
-    if (!this.formData.title?.trim()) {
+    if (this.taskForm.invalid) {
+      this.taskForm.markAllAsTouched();
       return;
     }
 
+    const formValue = this.taskForm.value;
     const isEdit = !!this.editTask();
 
     // Convert date string (YYYY-MM-DD) to ISO datetime (YYYY-MM-DDTHH:mm:ssZ)
     let dueDateTime: string | undefined = undefined;
-    if (this.formData.dueDate) {
-      // If the date is just a date string, convert to start of day in ISO format
-      const dateValue = this.formData.dueDate;
+    if (formValue.dueDate) {
+      const dateValue = formValue.dueDate;
       if (dateValue.length === 10) {
         // YYYY-MM-DD format - append time
         dueDateTime = `${dateValue}T00:00:00Z`;
@@ -250,33 +268,50 @@ export class TaskForm {
     }
 
     const taskData: any = {
-      title: this.formData.title.trim(),
-      description: this.formData.description?.trim() || undefined,
-      priority: this.formData.priority || undefined,
+      title: formValue.title?.trim(),
+      description: formValue.description?.trim() || undefined,
+      priority: formValue.priority || undefined,
       dueDate: dueDateTime
     };
 
     // Only include completed for edit mode
     if (isEdit) {
-      taskData.completed = this.formData.completed;
+      taskData.completed = formValue.completed;
     }
 
     this.save.emit(taskData);
-    // Don't reset form here - let parent handle closing/resetting
   }
 
   onCancel() {
     this.cancel.emit();
-    // Don't reset form here - let parent handle closing/resetting
   }
 
   private resetForm() {
-    this.formData = {
+    this.taskForm.reset({
       title: '',
       description: '',
       priority: 'MEDIUM',
       dueDate: '',
       completed: false
-    };
+    });
+  }
+
+  private formatDateForInput(dateString?: string): string {
+    if (!dateString) return '';
+
+    try {
+      // Handle ISO datetime strings - extract just the date part
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return '';
+
+      // Format as YYYY-MM-DD for HTML date input
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+
+      return `${year}-${month}-${day}`;
+    } catch {
+      return '';
+    }
   }
 }
